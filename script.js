@@ -93,55 +93,49 @@ const questions = [
 ];
    
 
-let currentQuestion = 0;
+let currentQuestionIndex = 0;
 let score = 0;
 
-function loadQuestion() {
-  const questionEl = document.getElementById("question");
-  const optionsEl = document.getElementById("options");
-  const nextBtn = document.getElementById("next-btn");
-  const scoreEl = document.getElementById("score");
+const questionElement = document.getElementById("question");
+const optionsElement = document.getElementById("options");
+const nextButton = document.getElementById("next-button");
 
-  scoreEl.style.display = "none";
-
-  if (currentQuestion < questions.length) {
-    const current = questions[currentQuestion];
-    questionEl.textContent = `Q${currentQuestion + 1}: ${current.question}`;
-    optionsEl.innerHTML = "";
-
-    current.options.forEach((option) => {
-      const button = document.createElement("button");
-      button.classList.add("option");
-      button.textContent = option;
-      button.onclick = () => checkAnswer(button, current.answer);
-      optionsEl.appendChild(button);
-    });
-  } else {
-    questionEl.textContent = "Quiz Completed!";
-    optionsEl.innerHTML = "";
-    nextBtn.style.display = "none";
-    scoreEl.style.display = "block";
-    scoreEl.textContent = `Your score: ${score} / ${questions.length}`;
-  }
-}
-
-function checkAnswer(button, correctAnswer) {
-  if (button.textContent === correctAnswer) {
-    score++;
-    button.style.backgroundColor = "#4CAF50";
-  } else {
-    button.style.backgroundColor = "#f44336";
-  }
-
-  Array.from(document.getElementsByClassName("option")).forEach((btn) => {
-    btn.disabled = true;
+function showQuestion() {
+  const currentQuestion = questions[currentQuestionIndex];
+  questionElement.textContent = currentQuestion.question;
+  optionsElement.innerHTML = ""; // Clear previous options
+  currentQuestion.options.forEach((option) => {
+    const button = document.createElement("button");
+    button.textContent = option;
+    button.onclick = () => selectAnswer(option);
+    optionsElement.appendChild(button);
   });
+  nextButton.style.display = "none"; // Hide the next button
 }
 
-function nextQuestion() {
-  currentQuestion++;
-  loadQuestion();
+function selectAnswer(option) {
+  const currentQuestion = questions[currentQuestionIndex];
+  if (option === currentQuestion.answer) {
+    score++;
+    alert("Correct!");
+  } else {
+    alert(`Wrong! The correct answer is: ${currentQuestion.answer}`);
+  }
+  nextButton.style.display = "block"; // Show the next button after selecting an answer
 }
 
-loadQuestion();
-  
+nextButton.onclick = () => {
+  currentQuestionIndex++;
+  if (currentQuestionIndex < questions.length) {
+    showQuestion();
+  } else {
+    // End of the quiz
+    questionElement.textContent = `Quiz finished! Your score: ${score}/${questions.length}`;
+    optionsElement.innerHTML = "";
+    nextButton.style.display = "none"; // Hide the next button after the quiz end
+s
+  }
+};
+
+// Initialize the first question
+showQuestion();
